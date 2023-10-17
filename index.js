@@ -35,7 +35,7 @@ async function run() {
 
 
     // API for brand
-    
+
     app.get('/brands', async(req, res) => {
         const brands = await brandCollection.find().toArray()
         res.send(brands)
@@ -51,17 +51,25 @@ async function run() {
 
     // API for Products
 
-    app.get('/products', async(req, res)=>{
+    app.get('/products', async(req, res) => {
         const prouducts = await productCollection.find().toArray()
         res.send(prouducts)
     })
 
-    app.post('/porducts', async(req, res) => {
+    app.post('/products', async(req, res) => {
         const newProduct = req.body;
         console.log(newProduct);
         const result = await productCollection.insertOne(newProduct);
         res.send(result);
     })
+
+    app.get('/products/:brand', async (req, res) => {
+        const brand = req.params.brand;
+        const products = await productCollection.find({ brand: brand }).toArray();
+        res.json(products); 
+      });
+
+      
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });

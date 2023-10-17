@@ -3,17 +3,12 @@ const cors = require('cors');
 const { MongoClient, ServerApiVersion } = require('mongodb');
 require('dotenv').config()
 
-
-
 const app =express();
 const port = process.env.PORT || 5000 ;
 
 // midleware 
 app.use(cors());
 app.use(express.json())
-
-//TechInnovateHub
-//RKAKdDtOEyl4fAmD
 
 
 
@@ -32,12 +27,48 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+
+    // brand database
+    const brandCollection = client.db("TechInnovateHubDB").collection("brand");
+    // product database
+    const productCollection = client.db("TechInnovateHubDB").collection("product");
+
+
+    // API for brand
+    
+    app.get('/brands', async(req, res) => {
+        const brands = await brandCollection.find().toArray()
+        res.send(brands)
+      })
+  
+    app.post('/brands', async(req, res) => {
+        const newBrand = req.body;
+        console.log(newBrand);
+        const result = await brandCollection.insertOne(newBrand);
+        res.send(result)
+    })
+
+
+    // API for Products
+
+    app.get('/products', async(req, res)=>{
+        const prouducts = await productCollection.find().toArray()
+        res.send(prouducts)
+    })
+
+    app.post('/porducts', async(req, res) => {
+        const newProduct = req.body;
+        console.log(newProduct);
+        const result = await productCollection.insertOne(newProduct);
+        res.send(result);
+    })
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
-    await client.close();
+    // await client.close();
   }
 }
 run().catch(console.dir);

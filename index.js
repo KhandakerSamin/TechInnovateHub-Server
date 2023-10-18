@@ -3,8 +3,8 @@ const cors = require('cors');
 const { MongoClient, ServerApiVersion } = require('mongodb');
 require('dotenv').config()
 
-const app =express();
-const port = process.env.PORT || 5000 ;
+const app = express();
+const port = process.env.PORT || 5000;
 
 // midleware 
 app.use(cors());
@@ -36,40 +36,68 @@ async function run() {
 
     // API for brand
 
-    app.get('/brands', async(req, res) => {
-        const brands = await brandCollection.find().toArray()
-        res.send(brands)
-      })
-  
-    app.post('/brands', async(req, res) => {
-        const newBrand = req.body;
-        console.log(newBrand);
-        const result = await brandCollection.insertOne(newBrand);
-        res.send(result)
+    app.get('/brands', async (req, res) => {
+      const brands = await brandCollection.find().toArray()
+      res.send(brands)
     })
 
-
-    // API for Products
-
-    app.get('/products', async(req, res) => {
-        const prouducts = await productCollection.find().toArray()
-        res.send(prouducts)
-    })
-
-    app.post('/products', async(req, res) => {
-        const newProduct = req.body;
-        console.log(newProduct);
-        const result = await productCollection.insertOne(newProduct);
-        res.send(result);
+    app.post('/brands', async (req, res) => {
+      const newBrand = req.body;
+      console.log(newBrand);
+      const result = await brandCollection.insertOne(newBrand);
+      res.send(result)
     })
 
     app.get('/products/:brand', async (req, res) => {
-        const brand = req.params.brand;
-        const products = await productCollection.find({ brand: brand }).toArray();
-        res.json(products); 
-      });
+      const brand = req.params.brand;
+      const products = await productCollection.find({ brand: brand }).toArray();
+      res.json(products);
+    });
 
-      
+    // API for Products
+
+    app.get('/products', async (req, res) => {
+      const prouducts = await productCollection.find().toArray()
+      res.send(prouducts)
+    })
+
+    app.get('/products/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await coffeeCollection.findOne(query);
+      res.send(result);
+    })
+
+    app.post('/products', async (req, res) => {
+      const newProduct = req.body;
+      console.log(newProduct);
+      const result = await productCollection.insertOne(newProduct);
+      res.send(result);
+    })
+
+    app.put('/products/:id', async (req, res) => {
+      const id = req.params.id;
+      console.log(id);
+      const filter = { _id: new ObjectId(id) }
+      const options = { upsert: true };
+      const updatedproduct = req.body;
+      const product = {
+        $set: {
+          name: updatedproduct.name,
+          brand: updatedproduct.brand,
+          category: updatedproduct.category,
+          description: updatedproduct.description,
+          price: updatedproduct.price,
+          rating: updatedproduct.rating,
+          photo: updatedproduct.photo
+        }
+      }
+      const result = await productCollection.updateOne(filter, product, options);
+      res.send(result);
+    })
+
+
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
@@ -83,9 +111,9 @@ run().catch(console.dir);
 
 
 app.get('/', (req, res) => {
-    res.send('TechInnovateHub is running on server');
+  res.send('TechInnovateHub is running on server');
 });
 
-app.listen( port, () => {
-    console.log(`TechInnovateHub server is running : ${port}`);
+app.listen(port, () => {
+  console.log(`TechInnovateHub server is running : ${port}`);
 })

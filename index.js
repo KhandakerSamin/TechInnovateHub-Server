@@ -105,6 +105,13 @@ async function run() {
       res.send(cartProuducts)
     }) 
 
+    app.get('/cartProducts/:email' , async(req, res) => {
+      const email = req.params.email
+      const query = {userEmail : email}
+      const cartProuducts = await cartCollection.find(query).toArray()
+      res.send(cartProuducts)
+    }) 
+
     app.post('/cartProducts' , async(req, res) => {
       const newCartProduct = req.body;
       console.log(newCartProduct);

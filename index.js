@@ -32,6 +32,8 @@ async function run() {
     const brandCollection = client.db("TechInnovateHubDB").collection("brand");
     // product database
     const productCollection = client.db("TechInnovateHubDB").collection("product");
+    //cart database
+    const cartCollection = client.db("TechInnovateHubDB").collection("cart");
 
 
     // API for brand
@@ -93,6 +95,27 @@ async function run() {
         }
       }
       const result = await productCollection.updateOne(filter, product, options);
+      res.send(result);
+    })
+
+    // api for cart
+
+    app.get('/cartProducts' , async(req, res) => {
+      const cartProuducts = await cartCollection.find().toArray()
+      res.send(cartProuducts)
+    }) 
+
+    app.post('/cartProducts' , async(req, res) => {
+      const newCartProduct = req.body;
+      console.log(newCartProduct);
+      const result = await cartCollection.insertOne(newCartProduct);
+      res.send(result);
+    })
+
+    app.delete('/cartProducts/:id', async(req, res) => {
+      const id = req.params.id;
+      const query = {_id : new ObjectId(id)}
+      const result = await cartCollection.deleteOne(query);
       res.send(result);
     })
 

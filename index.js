@@ -26,7 +26,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
     // brand database
     const brandCollection = client.db("TechInnovateHubDB").collection("brand");
@@ -125,7 +125,6 @@ async function run() {
       const result = await cartCollection.deleteOne(query);
       res.send(result);
     })
-
 
 
 
